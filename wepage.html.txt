@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Registration System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .box {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button.cancel {
+            background: #dc3545;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .msg {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎫 Event Registration System</h1>
+
+<!-- Create Event -->
+<div class="box">
+    <h2>Create Event</h2>
+    <input type="text" id="title" placeholder="Event Title">
+    <input type="date" id="date">
+    <input type="number" id="seats" placeholder="Total Seats">
+    <button onclick="createEvent()">Create Event</button>
+    <div class="msg" id="createMsg"></div>
+</div>
+
+<!-- Register Event -->
+<div class="box">
+    <h2>Register for Event</h2>
+    <input type="text" id="regUser" placeholder="User ID">
+    <input type="text" id="regEvent" placeholder="Event ID">
+    <button onclick="registerEvent()">Register</button>
+    <div class="msg" id="registerMsg"></div>
+</div>
+
+<!-- Cancel Registration -->
+<div class="box">
+    <h2>Cancel Event Registration</h2>
+    <input type="text" id="cancelUser" placeholder="User ID">
+    <input type="text" id="cancelEvent" placeholder="Event ID">
+    <button class="cancel" onclick="cancelEvent()">Cancel Registration</button>
+    <div class="msg" id="cancelMsg"></div>
+</div>
+
+<script>
+    const API = "http://localhost:3000/api";
+
+    async function createEvent() {
+        const res = await fetch(`${API}/event`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: document.getElementById("title").value,
+                date: document.getElementById("date").value,
+                totalSeats: document.getElementById("seats").value
+            })
+        });
+        const data = await res.json();
+        document.getElementById("createMsg").innerText =
+            "Event Created! ID: " + data._id;
+    }
+
+    async function registerEvent() {
+        const res = await fetch(`${API}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: document.getElementById("regUser").value,
+                eventId: document.getElementById("regEvent").value
+            })
+        });
+        const data = await res.json();
+        document.getElementById("registerMsg").innerText = data.message;
+    }
+
+    async function cancelEvent() {
+        const res = await fetch(`${API}/cancel`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: document.getElementById("cancelUser").value,
+                eventId: document.getElementById("cancelEvent").value
+            })
+        });
+        const data = await res.json();
+        document.getElementById("cancelMsg").innerText = data.message;
+    }
+</script>
+
+</body>
+</html>
